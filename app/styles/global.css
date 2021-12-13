@@ -121,8 +121,11 @@ input:where([type="search"]) {
 }
 
 .remix-app__header-home-link {
-  width: 106px;
   height: 30px;
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+  align-items: center;
   color: var(--color-foreground);
 }
 
