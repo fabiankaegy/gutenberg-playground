@@ -71,16 +71,6 @@ export function BlockEdit(props) {
 
 ## How does this work?
 
-```js
-<GutenbergSandbox 
-  initialBlocks={[['example/block']]}
-  files={[
-      name: "blocks/index.js",
-      active: true,
-      code: "console.log( 'Hello World' )"
-  ]]} />
-```
-
 - At the heart of this is the [`<Sandpack />` package from codesandbox](https://sandpack.codesandbox.io).
 - A custom wrapping react component is used to always add in a headless gutenberg instance simmilar to the [playground used in the Gutenberg Repo](https://github.com/WordPress/gutenberg/blob/trunk/storybook/stories/playground/index.js). 
 - To make it nicer to write documentation the component is then used in a [MDX](https://mdxjs.com) file so it can live alongside the documentation.
