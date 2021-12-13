@@ -2,9 +2,35 @@ import GutenbergSandbox from '../components/gutenberg-sandbox';
 
 # Gutenberg Playground
 
-<GutenbergSandbox>
-```js blocks/edit.js active
-import { useBlockProps, RichText } from "@wordpress/block-editor";
+This is an Exploration to see how an interactive sandbox to explain Gutenberg concepts with live editor access could look.
+
+<GutenbergSandbox 
+  initialBlocks={[['example/block']]}
+  files={[
+  {
+    name: 'blocks/index.js',
+    code: `import {
+	getBlockType,
+	registerBlockType,
+	unregisterBlockType
+} from "@wordpress/blocks";
+	
+import metadata from "./block.json";
+import { BlockEdit } from "./edit";
+	
+if (getBlockType(metadata.name)) {
+	unregisterBlockType(metadata.name);
+}
+	
+registerBlockType(metadata, {
+	edit: BlockEdit
+});
+    `
+  },
+  {
+    name: 'blocks/edit.js',
+    active: true,
+    code: `import { useBlockProps, RichText } from "@wordpress/block-editor";
 
 export function BlockEdit(props) {
   const { attributes, setAttributes } = props;
@@ -22,29 +48,11 @@ export function BlockEdit(props) {
     </div>
   );
 }
-```
-
-```js blocks/index.js
-import {
-	getBlockType,
-	registerBlockType,
-	unregisterBlockType
-} from "@wordpress/blocks";
-	
-import metadata from "./block.json";
-import { BlockEdit } from "./edit";
-	
-if (getBlockType(metadata.name)) {
-	unregisterBlockType(metadata.name);
-}
-	
-registerBlockType(metadata, {
-	edit: BlockEdit
-});
-```
-
-```js blocks/block.json
-{
+    `
+  },
+  {
+    name: 'blocks/block.json',
+    code: `{
     "name": "example/block",
     "title": "Example",
     "apiVersion": 2,
@@ -55,6 +63,6 @@ registerBlockType(metadata, {
         }
     }
 }
-```
-</GutenbergSandbox>
-
+    `
+  }
+]} />

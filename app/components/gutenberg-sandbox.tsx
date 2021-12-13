@@ -1,52 +1,40 @@
-import { Children, ReactChildren, ReactElement } from "react";
 import { Sandpack, SandpackSetup, SandpackFile } from "@codesandbox/sandpack-react";
 
 import gutenberg from './gutenberg';
 
 type SandpackProps = {
-    children: ReactChildren;
+    files: File[],
     setup?: SandpackSetup;
   };
 
+type File = {
+    name: string,
+    code: string,
+    active?: boolean,
+    hidden?: boolean,
+}
+
 export default function GutenbergSandbox(props: SandpackProps) {
-    let {children, setup} = props;
-    let codeSnippets = Children.toArray(children) as ReactElement[];
-    let isSingleFile = true;
+    let {files} = props;
 
-    const files = codeSnippets.reduce(
-        (result: Record<string, SandpackFile>, codeSnippet: ReactElement) => {
+    const allFiles = files.reduce(
+        (result: Record<string, SandpackFile>, codeSnippet: File) => {
 
-        // if (codeSnippet.props.mdxType !== 'pre') {
-        //     return result;
-        // }
-        const {props} = codeSnippet.props.children;
         let filePath; // path in the folder structure
         let fileHidden = false; // if the file is available as a tab
         let fileActive = false; // if the file tab is shown by default
 
-        console.log( props )
-        if (props.metastring) {
-            const [name, ...params] = props.metastring.split(' ');
-            filePath = '/' + name;
-            if (params.includes('hidden')) {
-            fileHidden = true;
-            }
-            if (params.includes('active')) {
-            fileActive = true;
-            }
-            isSingleFile = false;
-        } else {
-            throw new Error(
-                `Code block is missing a filename: ${props.children}`
-            );
-        }
+        filePath = '/' + codeSnippet.name;
+        fileHidden = !! codeSnippet.hidden
+        fileActive = !! codeSnippet.active;
+        
         if (result[filePath]) {
             throw new Error(
             `File ${filePath} was defined multiple times. Each file snippet should have a unique path name`
             );
         }
         result[filePath] = {
-            code: props.children as string,
+            code: codeSnippet.code,
             hidden: fileHidden,
             active: fileActive,
         };
@@ -56,22 +44,22 @@ export default function GutenbergSandbox(props: SandpackProps) {
         {}
     );
 
-    files['/styles.css'] = {
-        code: [files['/styles.css']?.code ?? ''].join('\n\n'),
+    allFiles['/styles.css'] = {
+        code: [allFiles['/styles.css']?.code ?? ''].join('\n\n'),
         hidden: true,
     };
 
-    files['/index.js'] = { 
+    allFiles['/index.js'] = { 
         code: gutenberg.index,
         hidden: true,
     }
 
-    files["/styles.css"] = { 
+    allFiles["/styles.css"] = { 
         code: gutenberg.style,
         hidden: true,
     }
 
-    files["/App.js"] = {
+    allFiles["/App.js"] = {
         code: gutenberg.app,
         hidden: true,
     }
@@ -95,7 +83,7 @@ export default function GutenbergSandbox(props: SandpackProps) {
 					"@wordpress/keyboard-shortcuts": "^3.0.6",
 					"@wordpress/format-library": "^3.0.15",
 				},
-                files: files
+                files: allFiles
             }}
             options={{
 				editorHeight: 600
