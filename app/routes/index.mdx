@@ -1,0 +1,60 @@
+import GutenbergSandbox from '../components/gutenberg-sandbox';
+
+# Gutenberg Playground
+
+<GutenbergSandbox>
+```js blocks/edit.js active
+import { useBlockProps, RichText } from "@wordpress/block-editor";
+
+export function BlockEdit(props) {
+  const { attributes, setAttributes } = props;
+  const { content } = attributes;
+
+  const blockProps = useBlockProps();
+  return (
+    <div {...blockProps}>
+      <RichText
+        tagName="h1"
+        onChange={(value) => setAttributes({ content: value })}
+        value={content}
+        placeholder="Hello World!"
+      />
+    </div>
+  );
+}
+```
+
+```js blocks/index.js
+import {
+	getBlockType,
+	registerBlockType,
+	unregisterBlockType
+} from "@wordpress/blocks";
+	
+import metadata from "./block.json";
+import { BlockEdit } from "./edit";
+	
+if (getBlockType(metadata.name)) {
+	unregisterBlockType(metadata.name);
+}
+	
+registerBlockType(metadata, {
+	edit: BlockEdit
+});
+```
+
+```js blocks/block.json
+{
+    "name": "example/block",
+    "title": "Example",
+    "apiVersion": 2,
+    "attributes": {
+        "content": {
+            "type": "string",
+            "default": ""
+        }
+    }
+}
+```
+</GutenbergSandbox>
+
